@@ -5,7 +5,13 @@ class Sham
   # generating names. This is a bit of a no-no, but we get away with
   # it in this context.
   def self.name(*args, &block)
-    method_missing(:name, *args, &block)
+    # Doesn't work with ZenTest:
+    # method_missing(:name, *args, &block)
+    if args.empty? && !block_given? && @@shams[:name].nil? # workaround for ZenTest initializer
+      super
+    else
+      method_missing(:name, *args, &block)
+    end
   end
   
   def self.method_missing(symbol, *args, &block)
